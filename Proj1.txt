@@ -1,0 +1,82 @@
+﻿I have loaded the following data 
+X,1,A,-
+X,2,A,-
+Y,1,A,-
+Y,2,A,+
+X,1,B,-
+X,2,B,+
+Y,1,B,+
+in the following table
+==============================
+CREATE TABLE PROJ1(FIELD1 CHAR(2),
+                   FIELD2 CHAR(2),
+                   FIELD3 CHAR(2),
+                   CLASS CHAR(2));
+======================================
+and my code is as follows
+========================================================
+CREATE OR REPLACE PROCEDURE XX_PROJ1_PROC(V_FIELD1 VARCHAR2
+                              ,V_FIELD2 NUMBER    --X,2,A
+                              ,V_FIELD3 VARCHAR2) 
+IS
+  V_PLUS_CALC NUMBER(4,3);
+  V_MINUS_CALC NUMBER(4,3);
+  
+  V_CNT_ALL NUMBER;
+  V_CNT_PLUS NUMBER;
+  V_CNT_MINUS NUMBER;
+  
+  V_F1_PLUS NUMBER;
+  V_F2_PLUS NUMBER;
+  V_F3_PLUS NUMBER;
+  
+  V_F1_MINUS NUMBER;
+  V_F2_MINUS NUMBER;
+  V_F3_MINUS NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO V_CNT_ALL 
+  FROM PROJ1;
+  SELECT COUNT(*) INTO V_CNT_PLUS 
+  FROM PROJ1 WHERE TRIM(CLASS)='+';
+  SELECT COUNT(*) INTO V_CNT_MINUS FROM PROJ1 WHERE TRIM(CLASS)='-';
+  
+  SELECT COUNT(*) INTO V_F1_PLUS
+  FROM PROJ1
+  WHERE TRIM(FIELD1)=V_FIELD1 AND TRIM(CLASS)='+';
+  
+  SELECT COUNT(*) INTO V_F2_PLUS
+  FROM PROJ1
+  WHERE TRIM(FIELD2)=V_FIELD2 AND TRIM(CLASS)='+';
+  
+  SELECT COUNT(*) INTO V_F3_PLUS
+  FROM PROJ1
+  WHERE TRIM(FIELD3)=V_FIELD3 AND TRIM(CLASS)='+';
+  
+  SELECT COUNT(*) INTO V_F1_MINUS
+  FROM PROJ1
+  WHERE TRIM(FIELD1)=V_FIELD1 AND TRIM(CLASS)='-';
+  
+  SELECT COUNT(*) INTO V_F2_MINUS
+  FROM PROJ1
+  WHERE TRIM(FIELD2)=V_FIELD2 AND TRIM(CLASS)='-';
+  
+  SELECT COUNT(*) INTO V_F3_MINUS
+  FROM PROJ1
+  WHERE TRIM(FIELD3)=V_FIELD3 AND TRIM(CLASS)='-';
+  
+  V_PLUS_CALC:=(V_CNT_PLUS/V_CNT_ALL)*(V_F1_PLUS/V_CNT_PLUS)*(V_F2_PLUS/V_CNT_PLUS)*(V_F3_PLUS/V_CNT_PLUS);
+  V_MINUS_CALC:=(V_CNT_MINUS/V_CNT_ALL)*(V_F1_MINUS/V_CNT_MINUS)*(V_F2_MINUS/V_CNT_MINUS)*(V_F3_MINUS/V_CNT_MINUS);
+  --V_PLUS_CALC:=(V_F1_PLUS/V_CNT_PLUS);
+    
+  IF V_PLUS_CALC > V_MINUS_CALC THEN
+  DBMS_OUTPUT.PUT_LINE(V_FIELD1||','||V_FIELD2||','||V_FIELD3||'='||'+');
+  ELSE
+  DBMS_OUTPUT.PUT_LINE(V_FIELD1||','||V_FIELD2||','||V_FIELD3||'='||'-');
+  END IF;
+END;                                   
+==================================================================================
+Execute the code as follows
+========================================
+EXEC XX_PROJ1_PROC('X',2,'A');
+EXEC XX_PROJ1_PROC('Y',2,'B');
+EXEC XX_PROJ1_PROC('Z',3,'C');

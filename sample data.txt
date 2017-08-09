@@ -1,0 +1,13 @@
+﻿Categorical attributes
+Sample Input
+X,1,A,-
+X,2,A,-
+Y,1,A,-
+Y,2,A,+
+X,1,B,-
+X,2,B,+
+Y,1,B,+
+Sample output
+X,2,A = -
+Y,2,B = +
+Z,2,C = -
